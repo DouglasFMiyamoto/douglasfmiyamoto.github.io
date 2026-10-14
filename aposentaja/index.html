@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AposentaJá · Suporte</title>
+<style>
+  :root {
+    --bg: #f6f6f5;
+    --card: #ffffff;
+    --text: #1f1f1e;
+    --sub: #5c5c59;
+    --border: #e2e2df;
+    --accent: #0f766e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615;
+      --card: #20201f;
+      --text: #ededeb;
+      --sub: #a9a9a5;
+      --border: #33332f;
+      --accent: #5eead4;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 8px; }
+  h2 { font-size: 1.15rem; margin: 32px 0 8px; }
+  h3 { font-size: 1rem; margin: 20px 0 4px; }
+  .sub { color: var(--sub); margin: 0 0 24px; }
+  .resumo { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  a { color: var(--accent); overflow-wrap: anywhere; }
+  li { margin: 6px 0; }
+  p { margin: 4px 0 12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>AposentaJá · Suporte</h1>
+  <p class="sub">Quando você pode se aposentar pelo INSS e quanto deve receber</p>
+
+  <div class="resumo">
+    <strong>App independente:</strong> o AposentaJá não representa o INSS nem nenhum órgão do governo. O resultado é uma
+    estimativa feita com as regras públicas da Previdência e os dados que você informa; não garante direito nem valor.
+  </div>
+
+  <div class="resumo">
+    <strong>Precisa de ajuda?</strong> Escreva para
+    <a href="mailto:lilianemiyamotoo@gmail.com?subject=AposentaJ%C3%A1">lilianemiyamotoo@gmail.com</a>
+    contando o modelo do celular e o que aconteceu. Não envie seu CNIS nem documentos pessoais por e-mail.
+  </div>
+
+  <h2>Perguntas frequentes</h2>
+
+  <h3>O AposentaJá é do INSS?</h3>
+  <p>
+    Não. É um app independente, sem vínculo com o INSS ou com o governo. Ele aplica as regras públicas de aposentadoria
+    do regime geral (INSS) aos seus dados. Só o INSS concede a aposentadoria: para pedir o benefício, use o
+    <a href="https://meu.inss.gov.br">Meu INSS</a>.
+  </p>
+
+  <h3>De onde vêm as regras e os valores?</h3>
+  <ul>
+    <li>Regras de aposentadoria e de transição: <a href="https://www.planalto.gov.br/ccivil_03/constituicao/emendas/emc/emc103.htm">Emenda Constitucional 103/2019</a>.</li>
+    <li>Cálculo do benefício, carência e fator previdenciário: <a href="https://www.planalto.gov.br/ccivil_03/leis/l8213cons.htm">Lei 8.213/1991</a>.</li>
+    <li>Contribuições (inclusive MEI e plano simplificado): <a href="https://www.planalto.gov.br/ccivil_03/leis/l8212cons.htm">Lei 8.212/1991</a>.</li>
+    <li>Salário mínimo e índices de correção (INPC e IGP-DI): séries do <a href="https://www3.bcb.gov.br/sgspub">Banco Central</a>; teto do INSS: portarias anuais do governo; expectativa de vida: tábua do IBGE.</li>
+    <li>Informações oficiais do INSS: <a href="https://www.gov.br/inss/pt-br">gov.br/inss</a>.</li>
+  </ul>
+
+  <h3>Como baixo o extrato do CNIS?</h3>
+  <p>
+    No app ou no site <a href="https://meu.inss.gov.br">Meu INSS</a>, entre com a sua conta gov.br, toque em
+    “Extrato de Contribuição (CNIS)” e em “Baixar PDF”. Depois, no AposentaJá, toque em “Importar o CNIS” e escolha o
+    arquivo. O PDF é lido no próprio celular e apagado em seguida.
+  </p>
+
+  <h3>Falta pouco para eu completar 30 (ou 35) anos de contribuição. Por que a data é bem mais tarde?</h3>
+  <p>
+    Desde a reforma de 2019, não existe aposentadoria só por tempo de contribuição. Além dos 30 anos (mulher) ou 35 anos
+    (homem), as regras pedem idade mínima ou pontos (idade + tempo de contribuição), que sobem a cada ano. O app mostra
+    a data em que <strong>todos</strong> os requisitos são cumpridos e diz quando você completa o tempo.
+  </p>
+
+  <h3>O resultado é diferente do simulador do Meu INSS</h3>
+  <p>
+    Pequenas diferenças de dias são normais: o Meu INSS conta até a data da simulação. Confira também se todos os
+    vínculos aparecem no seu CNIS e se há avisos na aba Períodos (por exemplo, vínculo sem data de fim ou com pendência).
+    O app ainda não calcula aposentadoria especial, de professor, da pessoa com deficiência, rural ou de servidor público.
+  </p>
+
+  <h3>O que é salário de contribuição? Por que o valor nunca passa do teto?</h3>
+  <p>
+    É o valor sobre o qual o INSS calcula o desconto, limitado ao teto do INSS. Quem ganha mais que o teto contribui
+    sobre o teto. A aposentadoria é calculada pela média desses salários, por isso também fica entre o salário mínimo e
+    o teto.
+  </p>
+
+  <h3>Sou MEI. Minhas contribuições contam?</h3>
+  <p>
+    Contam para as regras por idade e para a carência, mas não para as regras de 30/35 anos de contribuição, a menos que
+    sejam complementadas até 20% (Lei 8.212, art. 21). O app separa esse tempo automaticamente.
+  </p>
+
+  <h3>Comprei o relatório completo. Como funciona?</h3>
+  <p>
+    O relatório é comprado por perfil, pela App Store ou pela Google Play, e fica liberado com atualizações por 12 meses:
+    se seus dados ou as regras mudarem, ele acompanha. A compra também remove os anúncios do app. Como não há conta nem
+    servidor, o relatório fica guardado no aparelho: se trocar de celular, a compra não vai junto. Gere o PDF e guarde-o.
+  </p>
+
+  <h3>Não recebi as notificações</h3>
+  <p>
+    Verifique se as notificações do AposentaJá estão permitidas nos ajustes do celular. Os avisos são calculados no
+    aparelho: 1 ano, 6 meses e 1 mês antes da data em destaque, no dia em que você cumpre cada regra e em 2 de janeiro,
+    quando as regras de transição mudam. Abra o app de vez em quando para que as datas sejam recalculadas.
+  </p>
+
+  <h2>Privacidade</h2>
+  <p>
+    O app não pede cadastro, não envia seu CNIS para nenhum servidor e guarda seus dados só no aparelho. Leia a
+    <a href="privacidade.html">Política de Privacidade</a>.
+  </p>
+</main>
+</body>
+</html>
