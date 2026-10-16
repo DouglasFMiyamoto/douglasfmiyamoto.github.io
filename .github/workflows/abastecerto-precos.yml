@@ -1,0 +1,42 @@
+# Preços semanais da ANP para o app AbasteCerto. A ANP publica a semana nova, em geral, na sexta;
+# roda todo dia e o script não faz nada se a semana já foi processada. Repositório público: sem custo.
+name: AbasteCerto - preços da ANP
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: abastecerto-precos
+  cancel-in-progress: false
+
+jobs:
+  precos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Instalar o leitor de planilhas
+        working-directory: .github/abastecerto
+        run: npm install --no-audit --no-fund
+      - name: Gerar os preços por estado
+        working-directory: .github/abastecerto
+        run: node --no-warnings scripts/gerar-precos.mjs ../../abastecerto/precos
+      - name: Publicar se mudou
+        run: |
+          git add abastecerto/precos
+          if git diff --cached --quiet; then
+            echo "Nada novo."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+            git commit -m "AbasteCerto: preços da ANP de $(node -p "require('./abastecerto/precos/indice.json').semana.fim")"
+            git push
+          fi

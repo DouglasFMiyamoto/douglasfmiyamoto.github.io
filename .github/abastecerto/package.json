@@ -1,0 +1,9 @@
+{
+  "name": "abastecerto-precos",
+  "private": true,
+  "description": "Cópia do leitor de preços da ANP do app AbasteCerto (apps-portfolio/apps/abastecerto). Não editar aqui: copiar de lá.",
+  "type": "module",
+  "dependencies": {
+    "xlsx": "0.18.5"
+  }
+}

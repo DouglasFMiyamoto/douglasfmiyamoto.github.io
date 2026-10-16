@@ -1,0 +1,118 @@
+{
+ "semana": {
+  "inicio": "2026-10-04",
+  "fim": "2026-10-10"
+ },
+ "geradoEm": "2026-10-16T12:23:33.348Z",
+ "fonte": "https://www.gov.br/anp/pt-br/assuntos/precos-e-defesa-da-concorrencia/precos/arquivos-lpc/2026/revendas_lpc_2026-10-04_2026-10-10.xlsx",
+ "ufs": {
+  "AC": {
+   "postos": 12,
+   "bytes": 5058
+  },
+  "AL": {
+   "postos": 59,
+   "bytes": 21518
+  },
+  "AM": {
+   "postos": 55,
+   "bytes": 19880
+  },
+  "AP": {
+   "postos": 6,
+   "bytes": 2190
+  },
+  "BA": {
+   "postos": 239,
+   "bytes": 94544
+  },
+  "CE": {
+   "postos": 137,
+   "bytes": 51648
+  },
+  "DF": {
+   "postos": 50,
+   "bytes": 17302
+  },
+  "ES": {
+   "postos": 88,
+   "bytes": 34142
+  },
+  "GO": {
+   "postos": 185,
+   "bytes": 71693
+  },
+  "MA": {
+   "postos": 115,
+   "bytes": 42633
+  },
+  "MG": {
+   "postos": 472,
+   "bytes": 179382
+  },
+  "MS": {
+   "postos": 61,
+   "bytes": 22780
+  },
+  "MT": {
+   "postos": 84,
+   "bytes": 32367
+  },
+  "PA": {
+   "postos": 105,
+   "bytes": 36961
+  },
+  "PB": {
+   "postos": 67,
+   "bytes": 26528
+  },
+  "PE": {
+   "postos": 183,
+   "bytes": 69965
+  },
+  "PI": {
+   "postos": 59,
+   "bytes": 21555
+  },
+  "PR": {
+   "postos": 283,
+   "bytes": 108181
+  },
+  "RJ": {
+   "postos": 327,
+   "bytes": 130779
+  },
+  "RN": {
+   "postos": 51,
+   "bytes": 20226
+  },
+  "RO": {
+   "postos": 54,
+   "bytes": 21861
+  },
+  "RR": {
+   "postos": 15,
+   "bytes": 6233
+  },
+  "RS": {
+   "postos": 316,
+   "bytes": 123484
+  },
+  "SC": {
+   "postos": 174,
+   "bytes": 66000
+  },
+  "SE": {
+   "postos": 33,
+   "bytes": 12379
+  },
+  "SP": {
+   "postos": 1268,
+   "bytes": 484846
+  },
+  "TO": {
+   "postos": 39,
+   "bytes": 16060
+  }
+ }
+}
