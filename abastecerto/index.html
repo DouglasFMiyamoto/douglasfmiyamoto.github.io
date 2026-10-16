@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AbasteCerto · Suporte</title>
+<style>
+  :root {
+    --bg: #f6f6f5;
+    --card: #ffffff;
+    --text: #1f1f1e;
+    --sub: #5c5c59;
+    --border: #e2e2df;
+    --accent: #c2410c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615;
+      --card: #20201f;
+      --text: #ededeb;
+      --sub: #a9a9a5;
+      --border: #33332f;
+      --accent: #fdba74;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 8px; }
+  h2 { font-size: 1.15rem; margin: 32px 0 8px; }
+  h3 { font-size: 1rem; margin: 20px 0 4px; }
+  .sub { color: var(--sub); margin: 0 0 24px; }
+  .resumo { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  a { color: var(--accent); overflow-wrap: anywhere; }
+  li { margin: 6px 0; }
+  p { margin: 4px 0 12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>AbasteCerto · Suporte</h1>
+  <p class="sub">Gasolina ou etanol: qual custa menos para o seu carro, e os postos da sua cidade</p>
+
+  <div class="resumo">
+    <strong>App independente:</strong> o AbasteCerto não representa a ANP, o Inmetro nem nenhum órgão do governo. Os
+    preços mostrados são os da pesquisa semanal da ANP, com a data da coleta, e podem ter mudado: confirme na bomba.
+  </div>
+
+  <div class="resumo">
+    <strong>Precisa de ajuda?</strong> Escreva para
+    <a href="mailto:lilianemiyamotoo@gmail.com?subject=AbasteCerto">lilianemiyamotoo@gmail.com</a>
+    contando o modelo do celular, a cidade e o que aconteceu.
+  </div>
+
+  <h2>Perguntas frequentes</h2>
+
+  <h3>Como o app decide entre gasolina e etanol?</h3>
+  <p>
+    Pelo custo por quilômetro do seu carro: o preço do litro dividido pelo consumo (km/l) com cada combustível. Compensa
+    o que sai mais barato por km. A conhecida regra dos 70% é só uma média: muitos carros rendem mais (ou menos) com
+    etanol, e o ponto de equilíbrio muda. O app mostra até quanto o etanol compensa para o seu carro.
+  </p>
+
+  <h3>Não sei o consumo do meu carro. E agora?</h3>
+  <p>
+    Escolha a categoria do carro no cadastro: o app usa a mediana dos carros flex daquela categoria na tabela do
+    Programa Brasileiro de Etiquetagem Veicular (Inmetro) 2026. Depois, registre os abastecimentos completando o tanque:
+    a partir de duas medições, o app passa a usar o consumo real do seu carro.
+  </p>
+
+  <h3>Como o consumo real é calculado?</h3>
+  <p>
+    De um tanque cheio até o próximo: quilômetros rodados (diferença do odômetro) divididos pelos litros colocados no
+    intervalo. Trechos em que você misturou combustíveis não entram na conta.
+  </p>
+
+  <h3>De onde vêm os preços dos postos?</h3>
+  <p>
+    Do Levantamento de Preços de Combustíveis da <a href="https://www.gov.br/anp/pt-br">ANP</a>, publicado toda semana
+    com preços coletados em postos de cerca de 400 municípios. Cada preço aparece com a data da coleta e um selo: recente
+    (até 7 dias), atenção à data (8 a 14 dias) ou antigo (mais de 14 dias).
+  </p>
+
+  <h3>Por que alguns postos aparecem sem preço?</h3>
+  <p>
+    A ANP pesquisa uma amostra de postos a cada semana. Os demais aparecem pelo cadastro oficial de revendedores da ANP,
+    com endereço, bandeira e produtos, mas sem preço. Na tela Abastecer, você pode digitar os preços que vê na bomba.
+  </p>
+
+  <h3>Minha cidade não tem pesquisa da ANP</h3>
+  <p>
+    O app mostra os postos do cadastro oficial da cidade e a média do estado. A comparação entre gasolina e etanol
+    funciona em qualquer lugar, com os preços que você digita.
+  </p>
+
+  <h3>Um posto aparece com pendência ou interdição</h3>
+  <p>
+    A informação vem do cadastro de revendedores da ANP e pode indicar interdição ou pendência no sistema de
+    fiscalização. Confirme se o posto está funcionando antes de ir.
+  </p>
+
+  <h3>Comprei “Remover anúncios” e troquei de celular</h3>
+  <p>
+    Em <em>Mais &gt; Remover anúncios</em>, toque em “Restaurar compras”, usando a mesma conta da loja em que ela foi
+    feita.
+  </p>
+
+  <h2>Privacidade</h2>
+  <p>
+    O app não pede cadastro, guarda carros e abastecimentos só no aparelho e usa a localização apenas com o app aberto.
+    Leia a <a href="privacidade.html">Política de Privacidade</a>.
+  </p>
+</main>
+</body>
+</html>
