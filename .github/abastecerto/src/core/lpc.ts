@@ -33,14 +33,18 @@ export interface Media {
   n: number;
 }
 
+export interface MediasDaSemana {
+  estado: Partial<Record<Combustivel, Media>>;
+  municipios: Record<string, Partial<Record<Combustivel, Media>>>;
+}
+
 export interface ArquivoEstado {
   uf: string;
   semana: { inicio: string; fim: string };
   postos: PostoPesquisado[];
-  medias: {
-    estado: Partial<Record<Combustivel, Media>>;
-    municipios: Record<string, Partial<Record<Combustivel, Media>>>;
-  };
+  medias: MediasDaSemana;
+  /** Médias da semana anterior, para a variação semanal (desde 11/2026; ausente nos arquivos antigos). */
+  anterior?: MediasDaSemana & { semana: { inicio: string; fim: string } };
 }
 
 const PRODUTOS: Record<string, Combustivel> = {
@@ -71,11 +75,38 @@ export function dataLpc(v: unknown): string {
   return `${m[3]}-${m[2]}-${m[1]}`;
 }
 
-/** Semana do nome do arquivo: revendas_lpc_2026-10-04_2026-10-10.xlsx. */
+/**
+ * Semana do nome do arquivo. A ANP varia o formato: revendas_lpc_2026-10-04_2026-10-10.xlsx até
+ * 10/10/2026, revendas_lpc_2026_10_18-2026_10_24.xlsx depois, e já houve "2026-08-30-2026-09-5".
+ */
 export function semanaDoArquivo(nome: string): { inicio: string; fim: string } {
-  const m = nome.match(/(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})/);
+  const m = nome.match(/(\d{4})[-_](\d{1,2})[-_](\d{1,2})[-_](\d{4})[-_](\d{1,2})[-_](\d{1,2})/);
   if (!m) throw new ErroLpc(`Nome de arquivo sem a semana: ${nome}`);
-  return { inicio: m[1], fim: m[2] };
+  const data = (a: string, mes: string, d: string) => `${a}-${mes.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  return { inicio: data(m[1], m[2], m[3]), fim: data(m[4], m[5], m[6]) };
+}
+
+/** Links dos arquivos por posto na página da ANP, do mais recente para o mais antigo. */
+export function arquivosDaPagina(html: string): { url: string; semana: { inicio: string; fim: string } }[] {
+  const urls = [...new Set([...html.matchAll(/href="([^"]*revendas_lpc_[^"]*\.xlsx)"/g)].map((m) => m[1]))];
+  return urls
+    .flatMap((url) => {
+      try {
+        return [{ url, semana: semanaDoArquivo(url) }];
+      } catch {
+        return [];
+      }
+    })
+    .sort((a, b) => b.semana.fim.localeCompare(a.semana.fim));
+}
+
+/** Junta as médias da semana anterior a cada estado da semana atual (estado sem pesquisa antes: fica sem). */
+export function juntarSemanaAnterior(atuais: Record<string, ArquivoEstado>, anteriores: Record<string, ArquivoEstado>) {
+  for (const [uf, arquivo] of Object.entries(atuais)) {
+    const a = anteriores[uf];
+    if (a) arquivo.anterior = { semana: a.semana, estado: a.medias.estado, municipios: a.medias.municipios };
+  }
+  return atuais;
 }
 
 const texto = (v: unknown) => String(v ?? '').trim().replace(/\s+/g, ' ');

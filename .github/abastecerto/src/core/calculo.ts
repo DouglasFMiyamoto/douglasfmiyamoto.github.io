@@ -77,6 +77,33 @@ export function encherTanque(capacidadeLitros: number, nivelAtual: number, preco
   return { litros, custo: centavos(litros * preco) };
 }
 
+/** Combustível e custo de uma viagem (km já com a volta, se houver). */
+export function custoViagem(km: number, preco: number, kml: number) {
+  const litros = km / kml;
+  return { litros, custo: centavos(litros * preco) };
+}
+
+/**
+ * Diferença no tanque cheio entre o preço do posto e a média da cidade (reais). Positivo = o posto
+ * sai mais barato. Em tanque grande (van, caminhão), centavos por litro viram dezenas de reais.
+ */
+export const economiaNoTanque = (tanqueLitros: number, precoPosto: number, media: number) => centavos(tanqueLitros * (media - precoPosto));
+
+/** Mínimo de postos pesquisados nas duas semanas para mostrar a variação (com poucos, a média oscila à toa). */
+export const POSTOS_PARA_VARIACAO = 3;
+
+/**
+ * Variação da média de uma semana para a outra. null sem a semana anterior ou com poucos postos.
+ * "estavel" quando mudou menos de 1 centavo. A amostra da ANP muda um pouco de semana a semana.
+ */
+export function variacaoSemanal(m: { media: number; postos: number; mediaAnterior: number | null; postosAnterior: number | null }) {
+  if (m.mediaAnterior === null || m.postosAnterior === null) return null;
+  if (m.postos < POSTOS_PARA_VARIACAO || m.postosAnterior < POSTOS_PARA_VARIACAO) return null;
+  const diferenca = centavos(m.media - m.mediaAnterior);
+  const percentual = (m.media - m.mediaAnterior) / m.mediaAnterior;
+  return { diferenca, percentual, sentido: Math.abs(diferenca) < 0.01 ? ('estavel' as const) : diferenca > 0 ? ('subiu' as const) : ('caiu' as const) };
+}
+
 export type Selo = 'recente' | 'atencao' | 'antigo';
 
 /** Selo do preço pesquisado pela ANP, pelos dias desde a coleta (especificação, 6). */
