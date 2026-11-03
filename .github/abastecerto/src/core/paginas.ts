@@ -26,6 +26,20 @@ export const NOME_UF: Record<string, string> = {
   RO: 'Rondônia', RR: 'Roraima', RS: 'Rio Grande do Sul', SC: 'Santa Catarina', SE: 'Sergipe', SP: 'São Paulo', TO: 'Tocantins',
 };
 
+/** Artigo do estado, para "no Rio de Janeiro", "na Bahia", "em São Paulo". */
+const ARTIGO_UF: Record<string, 'o' | 'a' | ''> = {
+  AC: 'o', AL: '', AM: 'o', AP: 'o', BA: 'a', CE: 'o', DF: 'o', ES: 'o', GO: '', MA: 'o', MG: '', MS: '', MT: '',
+  PA: 'o', PB: 'a', PE: '', PI: 'o', PR: 'o', RJ: 'o', RN: 'o', RO: '', RR: '', RS: 'o', SC: '', SE: '', SP: '', TO: 'o',
+};
+const EM = { o: 'no', a: 'na', '': 'em' } as const;
+const DE = { o: 'do', a: 'da', '': 'de' } as const;
+export const emUf = (uf: string) => `${EM[ARTIGO_UF[uf] ?? '']} ${NOME_UF[uf] ?? uf}`;
+export const deUf = (uf: string) => `${DE[ARTIGO_UF[uf] ?? '']} ${NOME_UF[uf] ?? uf}`;
+/** Só a capital do Rio pede artigo entre as cidades pesquisadas ("no Rio de Janeiro"). */
+export const emCidade = (nome: string) => `${nome === 'Rio de Janeiro' ? 'no' : 'em'} ${nome}`;
+export const deCidade = (nome: string) => `${nome === 'Rio de Janeiro' ? 'do' : 'de'} ${nome}`;
+const maiuscula = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+
 const semAcento = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 /** "São João del-Rei" → "sao-joao-del-rei". */
@@ -69,14 +83,14 @@ function celulaVariacao(m: Media, anterior: Media | undefined) {
 }
 
 /** Frase do etanol × gasolina pelas médias, sem prometer o que só o consumo do carro responde. */
-export function textoEtanol(local: string, medias: Partial<Record<Combustivel, Media>>): string | null {
+export function textoEtanol(emLocal: string, medias: Partial<Record<Combustivel, Media>>): string | null {
   const g = medias.gasolina;
   const e = medias.etanol;
   if (!g || !e || g.n < POSTOS_MINIMOS || e.n < POSTOS_MINIMOS) return null;
   const r = e.media / g.media;
   const regra = r < 0.7 ? 'pela regra dos 70%, o etanol compensaria' : 'pela regra dos 70%, a gasolina compensaria';
   return (
-    `Em ${local}, o etanol custa em média ${porcento(r)} do preço da gasolina: ${regra}. Mas a regra é só uma média: o ` +
+    `${maiuscula(emLocal)}, o etanol custa em média ${porcento(r)} do preço da gasolina: ${regra}. Mas a regra é só uma média: o ` +
     'rendimento do etanol muda de carro para carro, e o ponto em que ele deixa de compensar também. O ' +
     'AbasteCerto faz a conta com o consumo do seu carro.'
   );
@@ -133,14 +147,13 @@ ${p.corpo}
 export function paginaCidade(arquivo: ArquivoEstado, municipio: string, nomes: NomesIbge): string {
   const { uf, semana } = arquivo;
   const cidade = nomeCidade(uf, municipio, nomes);
-  const local = `${cidade} - ${uf}`;
   const medias = arquivo.medias.municipios[municipio] ?? {};
   const postos = arquivo.postos.filter((p) => p.municipio === municipio);
   const combustiveis = COMBUSTIVEIS_POSTOS.filter((c) => medias[c]);
   const menores = combustiveis
     .filter((c) => c === 'gasolina' || c === 'etanol' || c === 'diesel_s10')
     .map((c) => `${NOME_COMBUSTIVEL[c].replace(' comum', '').toLowerCase().replace('diesel s10', 'diesel S10')} a partir de ${precoLitro((medias[c] as Media).min)}`);
-  const etanol = textoEtanol(cidade, medias);
+  const etanol = textoEtanol(emCidade(cidade), medias);
 
   const listas = combustiveis.map((c) => {
     const itens = maisBaratos(postos, c).map(
@@ -148,7 +161,7 @@ export function paginaCidade(arquivo: ArquivoEstado, municipio: string, nomes: N
         `<li><span class="preco">${preco(c, x.valor)}</span> <strong>${esc(nomeProprio(x.posto.nome))}</strong><br>` +
         `<span class="sub">${esc(nomeProprio(x.posto.endereco))}${x.posto.bairro.trim() ? ` · ${esc(nomeProprio(x.posto.bairro))}` : ''} · ${esc(nomeBandeira(x.posto.bandeira))} · pesquisado em ${dia(x.data)}</span></li>`,
     );
-    return `<h2>${NOME_COMBUSTIVEL[c]} mais ${c.startsWith('gasolina') ? 'barata' : 'barato'} em ${esc(cidade)}</h2><ol class="postos">${itens.join('')}</ol>`;
+    return `<h2>${NOME_COMBUSTIVEL[c]} mais ${c.startsWith('gasolina') ? 'barata' : 'barato'} ${esc(emCidade(cidade))}</h2><ol class="postos">${itens.join('')}</ol>`;
   });
 
   const vizinhas = Object.keys(arquivo.medias.municipios)
@@ -157,20 +170,20 @@ export function paginaCidade(arquivo: ArquivoEstado, municipio: string, nomes: N
     .sort((a, b) => a[1].localeCompare(b[1], 'pt-BR'))
     .map(([m, nome]) => `<a href="${urlCidade(uf, m)}">${esc(nome)}</a>`);
 
-  const corpo = `<h1>Preço da gasolina, etanol e diesel em ${esc(local)}</h1>
+  const corpo = `<h1>Preço da gasolina, etanol e diesel ${esc(emCidade(cidade))} - ${uf}</h1>
 <p class="sub">Pesquisa da ANP de ${periodo(semana)} · ${postos.length} ${postos.length === 1 ? 'posto pesquisado' : 'postos pesquisados'}</p>
 ${chamada(`No app: gasolina ou etanol para o <strong>seu</strong> carro, quanto você economiza no tanque cheio em cada posto, custo da viagem e média de consumo. Grátis para Android e iPhone.`)}
-<h2>Médias da semana em ${esc(cidade)}</h2>
+<h2>Médias da semana ${esc(emCidade(cidade))}</h2>
 ${tabelaMedias(medias, arquivo.anterior?.municipios[municipio], arquivo.medias.estado)}
-<p class="sub">Em R$ por litro (GNV: por m³). "Semana": diferença para a média da semana anterior (só com pelo menos 3 postos pesquisados nas duas). "Estado": média de ${esc(NOME_UF[uf] ?? uf)}.</p>
-${etanol ? `<h2>Etanol ou gasolina em ${esc(cidade)}?</h2><p>${esc(etanol)}</p>` : ''}
+<p class="sub">Em R$ por litro (GNV: por m³). "Semana": diferença para a média da semana anterior (só com pelo menos 3 postos pesquisados nas duas). "Estado": média ${esc(deUf(uf))}.</p>
+${etanol ? `<h2>Etanol ou gasolina ${esc(emCidade(cidade))}?</h2><p>${esc(etanol)}</p>` : ''}
 ${listas.join('\n')}
 ${chamada('Veja estes postos no mapa, com a distância até você e a rota pelo Google Maps ou Waze, no AbasteCerto.')}
-${vizinhas.length ? `<h2>Outras cidades de ${esc(NOME_UF[uf] ?? uf)}</h2><p class="cidades">${vizinhas.join(' ')}</p>` : ''}`;
+${vizinhas.length ? `<h2>Outras cidades ${esc(deUf(uf))}</h2><p class="cidades">${vizinhas.join(' ')}</p>` : ''}`;
 
   return layout({
-    titulo: `Preço da gasolina, etanol e diesel em ${local}: postos mais baratos`,
-    descricao: `Postos mais baratos de ${local} na pesquisa da ANP de ${periodo(semana)}${menores.length ? `: ${menores.join(', ')}` : ''}.`,
+    titulo: `Preço da gasolina, etanol e diesel ${emCidade(cidade)} - ${uf}: postos mais baratos`,
+    descricao: `Postos mais baratos ${deCidade(cidade)} - ${uf} na pesquisa da ANP de ${periodo(semana)}${menores.length ? `: ${menores.join(', ')}` : ''}.`,
     caminho: urlCidade(uf, municipio),
     migalhas: [
       ['Brasil', BASE],
@@ -194,19 +207,19 @@ export function paginaEstado(arquivo: ArquivoEstado, nomes: NomesIbge): string {
         colunas.map((x) => `<td>${c.medias[x] ? precoLitro((c.medias[x] as Media).media) : '–'}</td>`).join('') +
         '</tr>',
     );
-  const etanol = textoEtanol(estado, arquivo.medias.estado);
-  const corpo = `<h1>Preço dos combustíveis em ${esc(estado)}</h1>
+  const etanol = textoEtanol(emUf(uf), arquivo.medias.estado);
+  const corpo = `<h1>Preço dos combustíveis ${esc(emUf(uf))}</h1>
 <p class="sub">Pesquisa da ANP de ${periodo(semana)} · ${arquivo.postos.length} postos em ${cidades.length} ${cidades.length === 1 ? 'cidade' : 'cidades'}</p>
 ${chamada('No AbasteCerto: os postos da sua cidade com o preço pesquisado, a distância até você e quanto você economiza no tanque cheio.')}
-<h2>Médias de ${esc(estado)} na semana</h2>
+<h2>Médias ${esc(deUf(uf))} na semana</h2>
 ${tabelaMedias(arquivo.medias.estado, arquivo.anterior?.estado)}
 <p class="sub">Em R$ por litro (GNV: por m³).</p>
 ${etanol ? `<p>${esc(etanol)}</p>` : ''}
 <h2>Médias por cidade</h2>
 <div class="tabela"><table><thead><tr><th>Cidade</th>${colunas.map((c) => `<th>${NOME_COMBUSTIVEL[c].replace(' comum', '')}</th>`).join('')}</tr></thead><tbody>${cidades.join('')}</tbody></table></div>`;
   return layout({
-    titulo: `Preço da gasolina, etanol e diesel em ${estado} por cidade`,
-    descricao: `Média dos combustíveis em ${estado} e em cada cidade pesquisada pela ANP de ${periodo(semana)}, com os postos mais baratos.`,
+    titulo: `Preço da gasolina, etanol e diesel ${emUf(uf)} por cidade`,
+    descricao: `Média dos combustíveis ${emUf(uf)} e em cada cidade pesquisada pela ANP de ${periodo(semana)}, com os postos mais baratos.`,
     caminho: urlEstado(uf),
     migalhas: [
       ['Brasil', BASE],
@@ -239,6 +252,23 @@ ${chamada('Gasolina, etanol ou diesel: no AbasteCerto você vê o que compensa p
     migalhas: [['Brasil', null]],
     corpo,
   });
+}
+
+/**
+ * Lista das cidades por estado para a página de imagens para redes sociais: chave da ANP, nome com
+ * acento e postos pesquisados, da cidade com mais postos para a com menos (a primeira é o padrão).
+ */
+export function indiceCidades(arquivos: ArquivoEstado[], nomes: NomesIbge) {
+  return Object.fromEntries(
+    arquivos.map((a) => {
+      const postos = new Map<string, number>();
+      for (const p of a.postos) postos.set(p.municipio, (postos.get(p.municipio) ?? 0) + 1);
+      const cidades = Object.keys(a.medias.municipios)
+        .map((m) => ({ m, nome: nomeCidade(a.uf, m, nomes), postos: postos.get(m) ?? 0 }))
+        .sort((x, y) => y.postos - x.postos || x.nome.localeCompare(y.nome, 'pt-BR'));
+      return [a.uf, { nome: NOME_UF[a.uf] ?? a.uf, cidades }];
+    }),
+  );
 }
 
 export function sitemap(caminhos: string[], ultimaMudanca: string): string {

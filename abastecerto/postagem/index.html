@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Imagens para redes sociais</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #f6f6f5; --card: #fff; --text: #1f1f1e; --sub: #5c5c59; --border: #e2e2df; --accent: #c2410c; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161615; --card: #20201f; --text: #ededeb; --sub: #a9a9a5; --border: #33332f; --accent: #fdba74; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 Inter, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .sub { color: var(--sub); margin: 0 0 20px; font-size: .95rem; }
+  .controles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  label { display: flex; flex-direction: column; gap: 4px; font-weight: 600; font-size: .9rem; }
+  select { font: inherit; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); }
+  .formatos { display: flex; gap: 8px; grid-column: 1 / -1; }
+  .formatos button, .acoes button { font: inherit; font-weight: 600; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; }
+  .formatos button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  .acoes { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .acoes .principal { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  canvas { width: 100%; max-width: 420px; height: auto; display: block; border-radius: 12px; border: 1px solid var(--border); }
+  textarea { width: 100%; min-height: 180px; font: inherit; font-size: .9rem; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); }
+  .aviso { color: var(--sub); font-size: .85rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Imagens para redes sociais</h1>
+  <p class="sub">Escolha a cidade e o formato. A imagem usa a pesquisa da ANP mais recente e se atualiza sozinha toda semana.</p>
+
+  <div class="controles">
+    <label>Estado <select id="uf"></select></label>
+    <label>Cidade <select id="cidade"></select></label>
+    <div class="formatos" role="group" aria-label="Formato">
+      <button type="button" data-formato="feed" aria-pressed="true">Feed (4:5)</button>
+      <button type="button" data-formato="stories" aria-pressed="false">Stories, Reels e TikTok (9:16)</button>
+    </div>
+  </div>
+
+  <canvas id="tela" width="1080" height="1350"></canvas>
+
+  <div class="acoes">
+    <button type="button" class="principal" id="baixar">Baixar imagem</button>
+    <button type="button" id="copiar">Copiar legenda</button>
+  </div>
+
+  <label>Sugestão de legenda <textarea id="legenda" readonly></textarea></label>
+  <p class="aviso" id="estado"></p>
+</main>
+
+<script>
+(() => {
+  const NOMES = { gasolina: 'Gasolina', etanol: 'Etanol', gasolina_aditivada: 'Gasolina aditivada', diesel_s10: 'Diesel S10', diesel_s500: 'Diesel S500', gnv: 'GNV' };
+  const NA_IMAGEM = ['gasolina', 'etanol', 'diesel_s10', 'diesel_s500'];
+  const POSTOS_MINIMOS = 3;
+  const COR = { laranja: '#C2410C', claro: '#FFF7ED', texto: '#1F1F1E', sub: '#6B6B66', linha: '#F1E4D8', subiu: '#B91C1C', caiu: '#15803D', escuro: '#1F1F1E' };
+
+  const $ = (id) => document.getElementById(id);
+  const tela = $('tela');
+  const ctx = tela.getContext('2d');
+  let cidades = null;
+  let arquivo = null;
+  let formato = 'feed';
+
+  const ler = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+  const gravar = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+
+  const reais = (v, casas = 2) => v.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
+  const preco = (v) => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+  const dia = (iso) => iso.slice(8, 10) + '/' + iso.slice(5, 7);
+  const proprio = (t) => t.toLowerCase().split(' ').map((p, i) => (i > 0 && ['de', 'da', 'do', 'das', 'dos', 'e'].includes(p) ? p : p.charAt(0).toUpperCase() + p.slice(1))).join(' ');
+  // "no Rio de Janeiro", "em Campinas".
+  const emCidade = (nome) => (nome === 'Rio de Janeiro' ? 'no ' : 'em ') + nome;
+  const hashtag = (t) => '#' + t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  // Mesma regra do app: só com pelo menos 3 postos nas duas semanas; menos de 1 centavo = estável.
+  function variacao(m, a) {
+    if (!m || !a || m.n < POSTOS_MINIMOS || a.n < POSTOS_MINIMOS) return null;
+    const d = Math.round((m.media - a.media) * 100) / 100;
+    return { d, sentido: Math.abs(d) < 0.01 ? 'estavel' : d > 0 ? 'subiu' : 'caiu' };
+  }
+
+  function maisBarato(postos, c) {
+    let melhor = null;
+    for (const p of postos) {
+      const x = p.precos[c];
+      if (x && (!melhor || x.v < melhor.v || (x.v === melhor.v && x.d > melhor.d))) melhor = { v: x.v, d: x.d, nome: proprio(p.nome), bairro: proprio(p.bairro || '') };
+    }
+    return melhor;
+  }
+
+  function cortar(texto, largura) {
+    if (ctx.measureText(texto).width <= largura) return texto;
+    let t = texto;
+    while (t.length > 1 && ctx.measureText(t + '…').width > largura) t = t.slice(0, -1);
+    return t.trimEnd() + '…';
+  }
+
+  function txt(texto, x, y, { tam = 40, peso = 400, cor = COR.texto, alinhar = 'left', max } = {}) {
+    ctx.font = `${peso} ${tam}px Inter, sans-serif`;
+    ctx.fillStyle = cor;
+    ctx.textAlign = alinhar;
+    ctx.fillText(max ? cortar(texto, max) : texto, x, y);
+  }
+
+  function dados() {
+    const info = cidades[$('uf').value];
+    const c = info.cidades.find((x) => x.m === $('cidade').value) || info.cidades[0];
+    const medias = arquivo.medias.municipios[c.m] || {};
+    const anteriores = (arquivo.anterior && arquivo.anterior.municipios[c.m]) || {};
+    const postos = arquivo.postos.filter((p) => p.municipio === c.m);
+    const linhas = NA_IMAGEM.filter((k) => medias[k]).map((k) => ({ k, m: medias[k], v: variacao(medias[k], anteriores[k]), barato: maisBarato(postos, k) }));
+    const g = medias.gasolina, e = medias.etanol;
+    const razao = g && e && g.n >= POSTOS_MINIMOS && e.n >= POSTOS_MINIMOS ? e.media / g.media : null;
+    return { c, uf: arquivo.uf, semana: arquivo.semana, linhas, razao, postos: postos.length };
+  }
+
+  function desenhar() {
+    const d = dados();
+    const W = 1080;
+    const H = formato === 'feed' ? 1350 : 1920;
+    tela.width = W;
+    tela.height = H;
+    // Nos stories, o conteúdo fica no meio: o topo e o rodapé ficam atrás dos botões do aplicativo.
+    const y0 = formato === 'feed' ? 0 : 285;
+
+    ctx.fillStyle = COR.claro;
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = COR.laranja;
+    ctx.fillRect(0, 0, W, y0 + 150);
+
+    txt('AbasteCerto', 72, y0 + 96, { tam: 46, peso: 800, cor: '#FFFFFF' });
+    txt(`Semana de ${dia(d.semana.inicio)} a ${dia(d.semana.fim)}`, W - 72, y0 + 94, { tam: 32, peso: 600, cor: '#FFFFFF', alinhar: 'right' });
+
+    txt(`${d.c.nome} - ${d.uf}`, 72, y0 + 270, { tam: 78, peso: 800, max: W - 144 });
+    txt(`Média dos ${d.postos} postos pesquisados pela ANP`, 72, y0 + 330, { tam: 32, cor: COR.sub, max: W - 144 });
+
+    let y = y0 + 400;
+    const alturaLinha = 150;
+    for (const l of d.linhas) {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(48, y, W - 96, alturaLinha - 16);
+      // Linha de cima: combustível, média e variação; embaixo, na largura toda, o posto mais barato.
+      txt(NOMES[l.k], 84, y + 64, { tam: 40, peso: 600 });
+      txt(preco(l.m.media), W - 250, y + 66, { tam: 54, peso: 800, alinhar: 'right' });
+      if (l.v) {
+        const s = l.v.sentido;
+        const rotulo = s === 'estavel' ? 'estável' : `${s === 'subiu' ? '▲' : '▼'} ${reais(Math.abs(l.v.d))}`;
+        txt(rotulo, W - 84, y + 64, { tam: 34, peso: 800, cor: s === 'subiu' ? COR.subiu : s === 'caiu' ? COR.caiu : COR.sub, alinhar: 'right' });
+      }
+      if (l.barato) txt(`Mais barato: ${preco(l.barato.v)} · ${l.barato.nome}`, 84, y + 112, { tam: 27, cor: COR.sub, max: W - 168 });
+      y += alturaLinha;
+    }
+
+    if (d.razao) {
+      y += 30;
+      txt(`Etanol custa ${(d.razao * 100).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}% do preço da gasolina.`, 72, y + 30, { tam: 36, peso: 600, max: W - 144 });
+      txt('Compensa no seu carro? O app faz a conta com o consumo dele.', 72, y + 80, { tam: 30, cor: COR.sub, max: W - 144 });
+    }
+
+    const rodape = formato === 'feed' ? H - 170 : H - 285 - 170;
+    ctx.fillStyle = COR.escuro;
+    ctx.fillRect(0, rodape, W, H - rodape);
+    txt('Todos os postos da cidade no app AbasteCerto', 72, rodape + 70, { tam: 36, peso: 800, cor: '#FFFFFF', max: W - 144 });
+    txt('Grátis para Android e iPhone · Dados da ANP: confira na bomba', 72, rodape + 120, { tam: 27, cor: '#C9C9C4', max: W - 144 });
+
+    $('legenda').value = legenda(d);
+    gravar('postagem.uf', d.uf);
+    gravar('postagem.cidade', d.c.m);
+  }
+
+  function legenda(d) {
+    const linhas = d.linhas.map((l) => {
+      const v = l.v ? (l.v.sentido === 'estavel' ? ' (estável na semana)' : ` (${l.v.sentido} R$ ${reais(Math.abs(l.v.d))} na semana)`) : '';
+      return `${NOMES[l.k]}: ${preco(l.m.media)}${v}`;
+    });
+    return [
+      `⛽ Preço dos combustíveis ${emCidade(d.c.nome)} (${d.uf}), pesquisa da ANP de ${dia(d.semana.inicio)} a ${dia(d.semana.fim)}:`,
+      '',
+      ...linhas,
+      '',
+      'Posto mais barato, quanto você economiza no tanque cheio e se etanol compensa no SEU carro: no app AbasteCerto, grátis (link na bio).',
+      '',
+      `#combustivel #gasolina #etanol #diesel #precodagasolina ${hashtag(d.c.nome)} ${hashtag(cidades[d.uf].nome)}`,
+    ].join('\n');
+  }
+
+  async function carregarEstado(uf, cidadePreferida) {
+    $('estado').textContent = 'Carregando…';
+    const r = await fetch(`../precos/${uf}.json`);
+    arquivo = await r.json();
+    const sel = $('cidade');
+    sel.innerHTML = '';
+    for (const c of cidades[uf].cidades) sel.add(new Option(`${c.nome} (${c.postos} postos)`, c.m));
+    if (cidadePreferida && cidades[uf].cidades.some((c) => c.m === cidadePreferida)) sel.value = cidadePreferida;
+    $('estado').textContent = '';
+    desenhar();
+  }
+
+  async function iniciar() {
+    try {
+      cidades = await (await fetch('../postos/cidades.json')).json();
+      const sel = $('uf');
+      for (const uf of Object.keys(cidades).sort((a, b) => cidades[a].nome.localeCompare(cidades[b].nome, 'pt-BR'))) sel.add(new Option(cidades[uf].nome, uf));
+      sel.value = cidades[ler('postagem.uf')] ? ler('postagem.uf') : 'SP';
+      await document.fonts.load('800 40px Inter').catch(() => {});
+      await carregarEstado(sel.value, ler('postagem.cidade'));
+    } catch (e) {
+      $('estado').textContent = 'Não consegui carregar os preços. Tente de novo em instantes.';
+    }
+  }
+
+  $('uf').addEventListener('change', () => carregarEstado($('uf').value));
+  $('cidade').addEventListener('change', desenhar);
+  document.querySelectorAll('[data-formato]').forEach((b) =>
+    b.addEventListener('click', () => {
+      formato = b.dataset.formato;
+      document.querySelectorAll('[data-formato]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      desenhar();
+    }),
+  );
+  $('baixar').addEventListener('click', () => {
+    const d = dados();
+    const a = document.createElement('a');
+    a.download = `abastecerto-${hashtag(d.c.nome).slice(1)}-${d.uf.toLowerCase()}-${d.semana.fim}-${formato}.png`;
+    a.href = tela.toDataURL('image/png');
+    a.click();
+  });
+  $('copiar').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText($('legenda').value);
+      $('copiar').textContent = 'Legenda copiada';
+    } catch {
+      $('legenda').select();
+      $('copiar').textContent = 'Selecione e copie';
+    }
+    setTimeout(() => ($('copiar').textContent = 'Copiar legenda'), 2000);
+  });
+
+  iniciar();
+})();
+</script>
+</body>
+</html>

@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { BASE, ESTILO, paginaBrasil, paginaCidade, paginaEstado, sitemap, urlCidade, urlEstado } from '../src/core/paginas.ts';
+import { BASE, ESTILO, indiceCidades, paginaBrasil, paginaCidade, paginaEstado, sitemap, urlCidade, urlEstado } from '../src/core/paginas.ts';
 
 const [precos, saida] = process.argv.slice(2).map((p) => path.resolve(p));
 if (!precos || !saida) throw new Error('Uso: node scripts/gerar-paginas.mjs <pasta dos preços> <pasta das páginas>');
@@ -48,4 +48,6 @@ for (const arquivo of arquivos) {
   }
 }
 fs.writeFileSync(path.join(saida, 'sitemap.xml'), sitemap(caminhos, indice.semana.fim));
+// Para a página de imagens das redes sociais (abastecerto/postagem/): cidades com nome e acento.
+fs.writeFileSync(path.join(saida, 'cidades.json'), JSON.stringify(indiceCidades(arquivos, nomes)));
 console.log(`${caminhos.length} páginas (semana ${indice.semana.inicio} a ${indice.semana.fim}) → ${saida}`);
