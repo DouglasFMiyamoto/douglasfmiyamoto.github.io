@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baixar o AbasteCerto</title>
+<meta name="description" content="App gratuito: gasolina, etanol ou diesel, o que compensa para o seu veículo e os postos mais baratos da sua cidade.">
+<meta property="og:title" content="AbasteCerto: combustível mais barato">
+<meta property="og:description" content="Gasolina, etanol ou diesel: o que compensa e os postos mais baratos da sua cidade. Grátis para Android e iPhone.">
+<script>
+  // Android vai para a Play, iPhone/iPad para a App Store; no computador ficam os dois botões.
+  (function () {
+    var ua = navigator.userAgent || '';
+    var play = 'https://play.google.com/store/apps/details?id=io.github.douglasfmiyamoto.abastecerto';
+    var apple = 'https://apps.apple.com/app/id6827166125';
+    var ipad = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+    if (/Android/i.test(ua)) location.replace(play);
+    else if (/iPhone|iPad|iPod/i.test(ua) || ipad) location.replace(apple);
+  })();
+</script>
+<style>
+  :root { --bg: #f6f6f5; --text: #1f1f1e; --sub: #5c5c59; --accent: #c2410c; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161615; --text: #ededeb; --sub: #a9a9a5; --accent: #fdba74; } }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  main { max-width: 560px; margin: 0 auto; padding: 48px 16px; text-align: center; }
+  h1 { font-size: 1.6rem; margin: 0 0 8px; }
+  p { color: var(--sub); margin: 0 0 24px; }
+  .baixar { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .botao { display: inline-block; background: var(--accent); color: var(--bg); text-decoration: none; font-weight: 600; padding: 12px 18px; border-radius: 10px; }
+  .mais { display: block; margin-top: 24px; color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>AbasteCerto</h1>
+  <p>Gasolina, etanol ou diesel: o que compensa para o seu veículo e os postos mais baratos da sua cidade. Grátis.</p>
+  <div class="baixar">
+    <a class="botao" href="https://play.google.com/store/apps/details?id=io.github.douglasfmiyamoto.abastecerto">Baixar no Google Play</a>
+    <a class="botao" href="https://apps.apple.com/app/id6827166125">Baixar na App Store</a>
+  </div>
+  <a class="mais" href="../">Saiba mais e suporte</a>
+</main>
+</body>
+</html>

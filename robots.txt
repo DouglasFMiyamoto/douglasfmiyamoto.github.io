@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://douglasfmiyamoto.github.io/abastecerto/postos/sitemap.xml

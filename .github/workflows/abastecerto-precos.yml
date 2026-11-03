@@ -29,9 +29,12 @@ jobs:
       - name: Gerar os preços por estado
         working-directory: .github/abastecerto
         run: node --no-warnings scripts/gerar-precos.mjs ../../abastecerto/precos
+      - name: Gerar as páginas das cidades
+        working-directory: .github/abastecerto
+        run: node --no-warnings scripts/gerar-paginas.mjs ../../abastecerto/precos ../../abastecerto/postos
       - name: Publicar se mudou
         run: |
-          git add abastecerto/precos
+          git add abastecerto/precos abastecerto/postos
           if git diff --cached --quiet; then
             echo "Nada novo."
           else
