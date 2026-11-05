@@ -3,7 +3,9 @@
  * AbasteCerto. Baixa do gov.br:
  * - as listas de código de barras mais recentes (medicamentos, fraldas geriátricas, absorventes);
  * - a planilha das farmácias participantes.
- * Grava <saída>/itens.json, <saída>/farmacias/<UF>.json e, por último, <saída>/indice.json.
+ * E da Anvisa, a lista de preços da CMED (PMC): nome e códigos de barras de todos os remédios, para
+ * preencher o cadastro lendo a caixa.
+ * Grava <saída>/itens.json, <saída>/farmacias/<UF>.json, <saída>/cmed.json e, por último, <saída>/indice.json.
  * Sem mudança nas bases, não regrava nada (o robô do site não tem o que publicar).
  *
  * Uso: node scripts/gerar-bases.mjs <pasta de saída> [pasta com os arquivos já baixados]
@@ -13,6 +15,7 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
+import { dataDoArquivoCmed, lerListaCmed } from '../src/core/cmed.ts';
 import { lerListaEan, lerPlanilhaFarmacias } from '../src/core/farmacia-popular.ts';
 
 const require = createRequire(import.meta.url);
@@ -24,6 +27,7 @@ if (!saida) throw new Error('Uso: node scripts/gerar-bases.mjs <pasta de saída>
 
 const BASE = 'https://www.gov.br/saude/pt-br/composicao/sectics/farmacia-popular';
 const URL_FARMACIAS = `${BASE}/publicacoes/farmacias-participante-do-programa-farmacia-popular/@@download/file`;
+const PAGINA_CMED = 'https://www.gov.br/anvisa/pt-br/assuntos/medicamentos/cmed/precos';
 const MESES = ['janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 const LISTAS = [
   { tipo: 'medicamento', padrao: 'lista-de-medicamentos-ean' },
@@ -105,6 +109,18 @@ const total = Object.values(farmacias.porUf).reduce((s, l) => s + l.length, 0);
 if (total < 10_000) throw new Error(`Só ${total} farmácias lidas: o formato da planilha mudou?`);
 console.log(`Farmácias de ${farmacias.data}: ${total} em ${Object.keys(farmacias.porUf).length} UFs`);
 
+/* ---------- CMED (Anvisa) ---------- */
+
+const htmlCmed = new TextDecoder().decode(await baixar(PAGINA_CMED));
+const arquivoCmed = [...htmlCmed.matchAll(/arquivos\/(lista_pmc[^"'\/?#]*\.xlsx?)/gi)].map((m) => m[1]).sort().pop();
+if (!arquivoCmed) throw new Error('Lista PMC da CMED não encontrada na página');
+const planilhaCmed = XLSX.read(ler('cmed.xlsx') ?? (await baixar(`${PAGINA_CMED}/arquivos/${arquivoCmed}/@@download/file`)));
+const abaCmed = planilhaCmed.SheetNames.find((n) => /lista/i.test(n)) ?? planilhaCmed.SheetNames.at(-1);
+const produtosCmed = lerListaCmed(XLSX.utils.sheet_to_json(planilhaCmed.Sheets[abaCmed], { header: 1, defval: '' }));
+if (produtosCmed.length < 10_000) throw new Error(`Só ${produtosCmed.length} produtos na CMED: o formato mudou?`);
+const dataCmed = dataDoArquivoCmed(arquivoCmed);
+console.log(`CMED ${arquivoCmed}: ${produtosCmed.length} apresentações`);
+
 /* ---------- Gravação (só o que mudou; o índice por último) ---------- */
 
 let mudou = false;
@@ -120,6 +136,7 @@ const gravar = (arquivo, conteudo) => {
 const resumo = (texto) => createHash('sha256').update(texto).digest('hex').slice(0, 12);
 
 const textoItens = gravar('itens.json', { fontes, itens });
+const textoCmed = gravar('cmed.json', { data: dataCmed, produtos: produtosCmed });
 const ufs = {};
 for (const [uf, lista] of Object.entries(farmacias.porUf).sort()) {
   const texto = gravar(`farmacias/${uf}.json`, { data: farmacias.data, farmacias: lista });
@@ -136,7 +153,7 @@ for (const arquivo of fs.existsSync(path.join(saida, 'farmacias')) ? fs.readdirS
 if (mudou || !fs.existsSync(path.join(saida, 'indice.json'))) {
   fs.writeFileSync(
     path.join(saida, 'indice.json'),
-    JSON.stringify({ itens: { fontes, quantidade: itens.length, versao: resumo(textoItens) }, farmacias: { data: farmacias.data, ufs }, geradoEm: new Date().toISOString() }),
+    JSON.stringify({ itens: { fontes, quantidade: itens.length, versao: resumo(textoItens) }, farmacias: { data: farmacias.data, ufs }, cmed: { data: dataCmed, quantidade: produtosCmed.length, versao: resumo(textoCmed) }, geradoEm: new Date().toISOString() }),
   );
   console.log(`Bases gravadas em ${saida}`);
 } else {
