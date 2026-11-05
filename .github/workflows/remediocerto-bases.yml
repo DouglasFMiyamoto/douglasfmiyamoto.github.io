@@ -1,0 +1,44 @@
+# Bases do Farmácia Popular para o app RemédioCerto: listas de código de barras e farmácias
+# participantes (gov.br). As listas mudam poucas vezes por ano; roda toda segunda e o script não
+# regrava nada se as bases não mudaram. Repositório público: sem custo.
+name: RemédioCerto - bases do Farmácia Popular
+
+on:
+  schedule:
+    - cron: '0 11 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: remediocerto-bases
+  cancel-in-progress: false
+
+jobs:
+  bases:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Instalar os leitores de PDF e planilha
+        working-directory: .github/remediocerto
+        run: npm install --no-audit --no-fund
+      - name: Gerar as bases
+        working-directory: .github/remediocerto
+        run: node --no-warnings scripts/gerar-bases.mjs ../../remediocerto/dados
+      - name: Publicar se mudou
+        run: |
+          git add remediocerto/dados
+          if git diff --cached --quiet; then
+            echo "Nada novo."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+            git commit -m "RemédioCerto: bases do Farmácia Popular ($(node -p "require('./remediocerto/dados/indice.json').farmacias.data"))"
+            git pull --rebase
+            git push
+          fi

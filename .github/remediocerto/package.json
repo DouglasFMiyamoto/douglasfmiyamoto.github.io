@@ -1,0 +1,10 @@
+{
+  "name": "remediocerto-bases",
+  "private": true,
+  "description": "Cópia do gerador das bases do Farmácia Popular do app RemédioCerto (apps-portfolio/apps/remediocerto). Não editar aqui: copiar de lá.",
+  "type": "module",
+  "dependencies": {
+    "pdfjs-dist": "6.4.299",
+    "xlsx": "0.18.5"
+  }
+}
