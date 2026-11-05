@@ -1,5 +1,8 @@
 {
-  "proporcao": { "rodape": 0.25, "lista": 0.34 },
+  "proporcao": {
+    "rodape": 0.25,
+    "lista": 0.34
+  },
   "produtos": [
     {
       "id": "lixeira-carro",
@@ -8,7 +11,9 @@
       "imagem": "https://douglasfmiyamoto.github.io/loja/img/lixeira-carro.jpg",
       "url": "https://produto.mercadolivre.com.br/MLB-5172681371-lixeira-para-carro-porta-copos-compacta-automotiva-organizador-veicular-_JM",
       "loja": "mercadolivre",
-      "apps": ["abastecerto"]
+      "apps": [
+        "abastecerto"
+      ]
     },
     {
       "id": "arvore-natal-18cm",
@@ -16,7 +21,54 @@
       "imagem": "https://douglasfmiyamoto.github.io/loja/img/arvore-natal-18cm.jpg",
       "url": "https://shopee.com.br/product/1000207123/58270984103/",
       "loja": "shopee",
-      "apps": ["remediocerto"],
+      "apps": [
+        "remediocerto"
+      ],
+      "ate": "2026-12-24"
+    },
+    {
+      "id": "escultura-feminina",
+      "titulo": "Escultura feminina Força e Superação, preta ou dourada",
+      "preco": "R$ 44,68",
+      "imagem": "https://douglasfmiyamoto.github.io/loja/img/escultura-feminina.jpg",
+      "url": "https://shopee.com.br/product/1000207123/58221369611/",
+      "loja": "shopee",
+      "apps": [
+        "remediocerto"
+      ]
+    },
+    {
+      "id": "leao-coroa",
+      "titulo": "Leão decorativo com coroa, escultura para sala",
+      "preco": "R$ 49,90",
+      "imagem": "https://douglasfmiyamoto.github.io/loja/img/leao-coroa.jpg",
+      "url": "https://shopee.com.br/product/1000207123/58260915955/",
+      "loja": "shopee",
+      "apps": [
+        "remediocerto"
+      ]
+    },
+    {
+      "id": "gato-na-lua",
+      "titulo": "Gato na Lua decorativo, enfeite moderno",
+      "preco": "R$ 34,90",
+      "imagem": "https://douglasfmiyamoto.github.io/loja/img/gato-na-lua.jpg",
+      "url": "https://shopee.com.br/product/1000207123/58260914643/",
+      "loja": "shopee",
+      "apps": [
+        "remediocerto"
+      ]
+    },
+    {
+      "id": "guirlanda-jesus-nasceu",
+      "titulo": "Guirlanda de Natal \"Jesus nasceu\", enfeite de porta",
+      "preco": "R$ 44,90",
+      "imagem": "https://douglasfmiyamoto.github.io/loja/img/guirlanda-jesus-nasceu.jpg",
+      "url": "https://shopee.com.br/product/1000207123/58261362472/",
+      "loja": "shopee",
+      "apps": [
+        "remediocerto"
+      ],
       "ate": "2026-12-24"
     }
   ]
