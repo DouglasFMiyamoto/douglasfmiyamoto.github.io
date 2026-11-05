@@ -1,0 +1,23 @@
+{
+  "proporcao": { "rodape": 0.25, "lista": 0.34 },
+  "produtos": [
+    {
+      "id": "lixeira-carro",
+      "titulo": "Lixeira para carro com porta-copos, compacta",
+      "preco": "R$ 44,90",
+      "imagem": "https://douglasfmiyamoto.github.io/loja/img/lixeira-carro.jpg",
+      "url": "https://produto.mercadolivre.com.br/MLB-5172681371-lixeira-para-carro-porta-copos-compacta-automotiva-organizador-veicular-_JM",
+      "loja": "mercadolivre",
+      "apps": ["abastecerto"]
+    },
+    {
+      "id": "arvore-natal-18cm",
+      "titulo": "Árvore de Natal decorativa montável, 18 cm",
+      "imagem": "https://douglasfmiyamoto.github.io/loja/img/arvore-natal-18cm.jpg",
+      "url": "https://shopee.com.br/product/1000207123/58270984103/",
+      "loja": "shopee",
+      "apps": ["remediocerto"],
+      "ate": "2026-12-24"
+    }
+  ]
+}
