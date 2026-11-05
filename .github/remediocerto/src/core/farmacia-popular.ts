@@ -176,12 +176,18 @@ export function nomeLegivel(nome: string): string {
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
 
+/** Sufixos de empresa que ficam em maiúsculas: S.A., S/A, ME, EPP, EIRELI. */
+const SIGLAS_EMPRESA = /^(s\.a\.?|s\/a|me|epp|eireli)$/;
+
 /** "ABADIA DE GOIÁS" → "Abadia de Goiás". */
 export function nomeProprio(texto: string): string {
   const minusculas = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'd']);
   return texto
     .toLowerCase()
     .split(' ')
-    .map((p, i) => (i > 0 && minusculas.has(p) ? p : p.charAt(0).toUpperCase() + p.slice(1)))
+    .map((p, i) => {
+      if (SIGLAS_EMPRESA.test(p)) return p.toUpperCase();
+      return i > 0 && minusculas.has(p) ? p : p.charAt(0).toUpperCase() + p.slice(1);
+    })
     .join(' ');
 }
