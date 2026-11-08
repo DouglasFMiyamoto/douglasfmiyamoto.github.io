@@ -3,7 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LotoCerto · Suporte</title>
+<title>LotoCerto: resultados das loterias, conferência de jogos e bolão</title>
+<meta name="description" content="App gratuito para Android e iPhone: resultados da Mega-Sena, Lotofácil, Quina e demais loterias da CAIXA, conferência automática dos seus jogos e organização de bolões.">
+<link rel="canonical" href="https://douglasfmiyamoto.github.io/lotocerto/">
+<link rel="icon" href="img/icone.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="LotoCerto: resultados, conferência de jogos e bolão">
+<meta property="og:description" content="Tire foto do recibo da lotérica e o app confere seus jogos a cada sorteio. Bolão do trabalho sem planilha. Grátis.">
+<meta property="og:url" content="https://douglasfmiyamoto.github.io/lotocerto/">
+<meta property="og:image" content="https://douglasfmiyamoto.github.io/lotocerto/img/destaque.jpg">
 <style>
   :root {
     --bg: #f6f6f5;
@@ -12,6 +21,7 @@
     --sub: #5c5c59;
     --border: #e2e2df;
     --accent: #0b6e4f;
+    --on-accent: #ffffff;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -21,6 +31,7 @@
       --sub: #a9a9a5;
       --border: #33332f;
       --accent: #34c98a;
+      --on-accent: #0f2a20;
     }
   }
   * { box-sizing: border-box; }
@@ -30,22 +41,84 @@
     color: var(--text);
     font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
-  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
-  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 8px; }
-  h2 { font-size: 1.15rem; margin: 32px 0 8px; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  .topo { display: flex; align-items: center; gap: 16px; margin: 0 0 16px; }
+  .topo img { width: 72px; height: 72px; border-radius: 16px; flex: none; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0; }
+  h2 { font-size: 1.25rem; margin: 40px 0 8px; }
   h3 { font-size: 1rem; margin: 20px 0 4px; }
-  .sub { color: var(--sub); margin: 0 0 24px; }
-  .resumo { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-  a { color: var(--accent); }
+  .sub { color: var(--sub); font-size: 1.1rem; margin: 0 0 20px; }
+  .resumo { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  a { color: var(--accent); overflow-wrap: anywhere; }
   li { margin: 6px 0; }
   p { margin: 4px 0 12px; }
+  .baixar { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 8px; }
+  .botao { display: inline-block; background: var(--accent); color: var(--on-accent); text-decoration: none; font-weight: 600; padding: 12px 18px; border-radius: 10px; }
+  .nota { color: var(--sub); font-size: .9rem; margin: 0 0 8px; }
+  .funcoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 16px 0 0; }
+  .funcoes div { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .funcoes strong { display: block; margin-bottom: 4px; }
+  .funcoes p { margin: 0; color: var(--sub); }
+  .telas { display: flex; gap: 12px; overflow-x: auto; padding: 4px 0 12px; scroll-snap-type: x mandatory; }
+  .telas figure { margin: 0; flex: 0 0 200px; scroll-snap-align: start; }
+  .telas img { width: 200px; height: 400px; border-radius: 14px; border: 1px solid var(--border); display: block; }
+  .telas figcaption { font-size: .9rem; color: var(--sub); margin-top: 6px; }
 </style>
 </head>
 <body>
 <main>
-  <h1>LotoCerto · Suporte</h1>
-  <p class="sub">Resultados, conferência de apostas e bolões das loterias federais</p>
+  <div class="topo">
+    <img src="img/icone.png" alt="" width="72" height="72">
+    <h1>LotoCerto: resultados, conferência de jogos e bolão</h1>
+  </div>
+  <p class="sub">Tire foto do recibo da lotérica e o app confere seus jogos sozinho a cada sorteio. Grátis para Android e iPhone.</p>
 
+  <div class="baixar">
+    <a class="botao" href="https://play.google.com/store/apps/details?id=io.github.douglasfmiyamoto.lotocerto">Baixar no Google Play</a>
+    <a class="botao" href="https://apps.apple.com/br/app/lotocerto/id6817556027">Baixar na App Store</a>
+  </div>
+  <p class="nota">Sem cadastro e sem login. Proibido para menores de 18 anos.</p>
+
+  <div class="funcoes">
+    <div>
+      <strong>Resultados das loterias</strong>
+      <p>Mega-Sena, Lotofácil, Quina, Lotomania, Timemania, Dupla Sena, Dia de Sorte, +Milionária e Super Sete, com os prêmios de cada faixa.</p>
+    </div>
+    <div>
+      <strong>Conferência automática</strong>
+      <p>Cadastre o jogo pela foto do recibo, pelo volante ou falando os números. O app confere a cada sorteio e avisa se você ganhou.</p>
+    </div>
+    <div>
+      <strong>Bolão sem planilha</strong>
+      <p>Jogos, participantes e cotas num lugar só, com quem já pagou e quanto cabe a cada um. Compartilhe no WhatsApp.</p>
+    </div>
+    <div>
+      <strong>Teimosinha e bolão CAIXA</strong>
+      <p>Confere vários concursos seguidos e jogos com mais números, e mostra a sua parte quando você compra cota de bolão na lotérica.</p>
+    </div>
+  </div>
+
+  <h2>Veja o app</h2>
+  <div class="telas">
+    <figure><img src="img/1-resultados.webp" alt="Tela de resultados das loterias" width="200" height="400" loading="lazy"><figcaption>Últimos resultados</figcaption></figure>
+    <figure><img src="img/2-jogos.webp" alt="Tela Meus jogos com apostas conferidas" width="200" height="400" loading="lazy"><figcaption>Seus jogos conferidos</figcaption></figure>
+    <figure><img src="img/7-volante.webp" alt="Volante para marcar os números" width="200" height="400" loading="lazy"><figcaption>Volante na tela</figcaption></figure>
+    <figure><img src="img/5-bolao.webp" alt="Tela de um bolão com jogos e participantes" width="200" height="400" loading="lazy"><figcaption>Bolão do escritório</figcaption></figure>
+  </div>
+
+  <h2>Mega da Virada</h2>
+  <p>
+    Vai fazer o bolão da Virada com a família ou o trabalho? Cadastre os jogos no LotoCerto, divida as cotas e
+    compartilhe com o grupo. Na noite do sorteio o app confere tudo e mostra quanto cabe a cada participante.
+  </p>
+
+  <div class="resumo">
+    <strong>App independente:</strong> o LotoCerto não vende apostas, não recebe pagamentos de apostas e não tem
+    vínculo com a CAIXA. Os resultados são os dados públicos divulgados em
+    <a href="https://loterias.caixa.gov.br">loterias.caixa.gov.br</a>. Confira sempre o resultado oficial.
+  </div>
+
+  <h2>Suporte</h2>
   <div class="resumo">
     <strong>Precisa de ajuda?</strong> Escreva para
     <a href="mailto:lilianemiyamotoo@gmail.com?subject=LotoCerto">lilianemiyamotoo@gmail.com</a>
@@ -68,8 +141,8 @@
 
   <h3>Como cadastro uma aposta?</h3>
   <p>
-    Em “Meus jogos”, marque os números no volante ou toque em “Ler comprovante” e tire uma foto do recibo da lotérica.
-    A leitura é feita no próprio celular; confira os números com o papel antes de salvar.
+    Em “Meus jogos”, marque os números no volante, fale os números ou toque em “Comprovante” e tire uma foto do recibo
+    da lotérica. A leitura é feita no próprio celular; confira os números com o papel antes de salvar.
   </p>
 
   <h3>Não recebi a notificação do resultado</h3>
@@ -81,8 +154,15 @@
   <h3>Como funciona o bolão?</h3>
   <p>
     Quem organiza cria o bolão, adiciona os jogos e os participantes e compartilha a mensagem no WhatsApp. Os
-    participantes podem importar essa mensagem para acompanhar. O app gera o código Pix com os dados que o organizador
-    informou, mas não participa do pagamento: confira sempre o nome de quem recebe no app do seu banco.
+    participantes podem importar essa mensagem para acompanhar. No Android, o app também gera o código Pix com os dados
+    que o organizador informou, mas não participa do pagamento: confira sempre o nome de quem recebe no app do seu
+    banco.
+  </p>
+
+  <h3>Comprei uma cota de bolão na lotérica. O app mostra a minha parte?</h3>
+  <p>
+    Sim. Ao ler o comprovante de um bolão CAIXA, informe quantas cotas são suas. Se o bolão for premiado, o app mostra o
+    prêmio total e a sua parte.
   </p>
 
   <h3>Troquei de celular. Como levo meus jogos?</h3>
