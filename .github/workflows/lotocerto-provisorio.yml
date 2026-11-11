@@ -1,0 +1,60 @@
+# Resultado provisório do LotoCerto: o Douglas digita os números da transmissão (pelo app do GitHub,
+# Actions > "LotoCerto - resultado provisório" > Run workflow) e o app mostra até a CAIXA publicar.
+# O script confere quantidade, faixa, repetidos e o número do concurso antes de publicar.
+name: LotoCerto - resultado provisório
+
+on:
+  workflow_dispatch:
+    inputs:
+      loteria:
+        description: Loteria
+        type: choice
+        options: [megasena, lotofacil, quina]
+        required: true
+      dezenas:
+        description: Números sorteados (separados por espaço, vírgula ou traço)
+        type: string
+        required: false
+      concurso:
+        description: Concurso (deixe vazio para o próximo)
+        type: string
+        required: false
+      acao:
+        description: O que fazer
+        type: choice
+        options: [publicar, remover]
+        default: publicar
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lotocerto-provisorio
+  cancel-in-progress: false
+
+jobs:
+  provisorio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Conferir e gravar
+        env:
+          LOTERIA: ${{ inputs.loteria }}
+          DEZENAS: ${{ inputs.dezenas }}
+          CONCURSO: ${{ inputs.concurso }}
+        run: node --no-warnings .github/lotocerto/provisorio.mjs "${{ inputs.acao }}" lotocerto/provisorios.json
+      - name: Publicar
+        run: |
+          git add lotocerto/provisorios.json
+          if git diff --cached --quiet; then
+            echo "Nada mudou."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+            git commit -m "LotoCerto: provisório ${{ inputs.acao }} ${{ inputs.loteria }} ${{ inputs.concurso }}"
+            git push
+          fi

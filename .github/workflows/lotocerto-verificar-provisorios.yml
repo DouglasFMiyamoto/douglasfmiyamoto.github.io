@@ -1,0 +1,45 @@
+# Depois que a CAIXA publica, compara cada provisório com o oficial e tira do arquivo. Se algum
+# estava diferente, a execução falha e o GitHub manda e-mail: é o aviso de que um número saiu errado.
+name: LotoCerto - conferir provisórios
+
+on:
+  schedule:
+    - cron: '0 5,11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lotocerto-provisorio
+  cancel-in-progress: false
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Comparar com o oficial
+        id: comparar
+        continue-on-error: true
+        run: node --no-warnings .github/lotocerto/provisorio.mjs verificar lotocerto/provisorios.json
+      - name: Publicar se mudou
+        run: |
+          git add lotocerto/provisorios.json
+          if git diff --cached --quiet; then
+            echo "Nada mudou."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+            git commit -m "LotoCerto: provisórios confirmados pelo oficial"
+            git push
+          fi
+      - name: Avisar divergência
+        if: steps.comparar.outcome == 'failure'
+        run: |
+          echo "Algum provisório estava diferente do oficial (veja o passo anterior)."
+          exit 1
