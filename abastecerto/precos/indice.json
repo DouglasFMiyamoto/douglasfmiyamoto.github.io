@@ -1,122 +1,122 @@
 {
  "semana": {
+  "inicio": "2026-11-08",
+  "fim": "2026-11-14"
+ },
+ "anterior": {
   "inicio": "2026-11-01",
   "fim": "2026-11-07"
  },
- "anterior": {
-  "inicio": "2026-10-25",
-  "fim": "2026-10-31"
- },
- "geradoEm": "2026-11-09T22:14:01.171Z",
- "fonte": "https://www.gov.br/anp/pt-br/assuntos/precos-e-defesa-da-concorrencia/precos/arquivos-lpc/2026/revendas_lpc_2026_11_01-2026_11_07.xlsx",
+ "geradoEm": "2026-11-13T19:30:16.903Z",
+ "fonte": "https://www.gov.br/anp/pt-br/assuntos/precos-e-defesa-da-concorrencia/precos/arquivos-lpc/2026/revendas_lpc_2026_11_08-2026_11_14.xlsx",
  "ufs": {
   "AC": {
-   "postos": 15,
-   "bytes": 7530
+   "postos": 14,
+   "bytes": 7100
   },
   "AL": {
    "postos": 59,
-   "bytes": 23800
+   "bytes": 23696
   },
   "AM": {
-   "postos": 55,
-   "bytes": 20868
+   "postos": 54,
+   "bytes": 20738
   },
   "AP": {
    "postos": 22,
-   "bytes": 7053
+   "bytes": 7181
   },
   "BA": {
-   "postos": 231,
-   "bytes": 100527
+   "postos": 242,
+   "bytes": 104619
   },
   "CE": {
-   "postos": 142,
-   "bytes": 57082
+   "postos": 145,
+   "bytes": 57530
   },
   "DF": {
    "postos": 50,
-   "bytes": 17980
+   "bytes": 18443
   },
   "ES": {
-   "postos": 92,
-   "bytes": 39218
+   "postos": 80,
+   "bytes": 34216
   },
   "GO": {
-   "postos": 189,
-   "bytes": 78646
+   "postos": 174,
+   "bytes": 72789
   },
   "MA": {
-   "postos": 115,
-   "bytes": 45531
+   "postos": 106,
+   "bytes": 42408
   },
   "MG": {
-   "postos": 512,
-   "bytes": 209964
+   "postos": 476,
+   "bytes": 195587
   },
   "MS": {
-   "postos": 62,
-   "bytes": 24978
+   "postos": 60,
+   "bytes": 24311
   },
   "MT": {
-   "postos": 86,
-   "bytes": 35848
+   "postos": 85,
+   "bytes": 35369
   },
   "PA": {
-   "postos": 116,
-   "bytes": 44941
+   "postos": 108,
+   "bytes": 41668
   },
   "PB": {
    "postos": 67,
-   "bytes": 28849
+   "bytes": 28870
   },
   "PE": {
-   "postos": 190,
-   "bytes": 77337
+   "postos": 189,
+   "bytes": 77035
   },
   "PI": {
    "postos": 59,
-   "bytes": 23335
+   "bytes": 23444
   },
   "PR": {
-   "postos": 257,
-   "bytes": 106184
+   "postos": 295,
+   "bytes": 119793
   },
   "RJ": {
-   "postos": 330,
-   "bytes": 141549
+   "postos": 334,
+   "bytes": 143738
   },
   "RN": {
-   "postos": 44,
-   "bytes": 19543
+   "postos": 36,
+   "bytes": 16307
   },
   "RO": {
    "postos": 54,
-   "bytes": 23689
+   "bytes": 23647
   },
   "RR": {
    "postos": 15,
-   "bytes": 6871
+   "bytes": 6869
   },
   "RS": {
-   "postos": 341,
-   "bytes": 143853
+   "postos": 328,
+   "bytes": 139165
   },
   "SC": {
-   "postos": 171,
-   "bytes": 70091
+   "postos": 172,
+   "bytes": 70287
   },
   "SE": {
-   "postos": 40,
-   "bytes": 17247
+   "postos": 32,
+   "bytes": 13858
   },
   "SP": {
-   "postos": 1300,
-   "bytes": 524038
+   "postos": 1266,
+   "bytes": 514210
   },
   "TO": {
-   "postos": 35,
-   "bytes": 16875
+   "postos": 46,
+   "bytes": 20724
   }
  }
 }
