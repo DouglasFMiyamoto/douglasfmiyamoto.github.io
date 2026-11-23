@@ -11,6 +11,7 @@
  */
 import { Buffer } from 'node:buffer';
 import fs from 'node:fs';
+import net from 'node:net';
 import path from 'node:path';
 
 import { read, utils } from 'xlsx';
@@ -23,7 +24,11 @@ const UA = { 'User-Agent': 'Mozilla/5.0 (compatible; AbasteCerto/1.0; +https://d
 const saida = path.resolve(process.argv[2] ?? 'saida-precos');
 const DIAS_MAXIMOS = 16;
 
-const html = await (await fetch(PAGINA, { headers: UA })).text();
+// O Node só espera 250 ms pela conexão; do GitHub (EUA) até o gov.br às vezes passa disso e o fetch
+// falha com ETIMEDOUT em internalConnectMultiple (aconteceu de 20 a 22/11/2026). Espera até 10 s.
+net.setDefaultAutoSelectFamilyAttemptTimeout(10_000);
+
+const html = await (await buscar(PAGINA)).text();
 const arquivos = arquivosDaPagina(html);
 if (!arquivos.length) throw new Error('Nenhum arquivo revendas_lpc_*.xlsx na página da ANP: o endereço ou o formato mudou?');
 const [atual, anterior] = arquivos;
@@ -38,8 +43,24 @@ const jaFeita = fs.existsSync(arquivoIndice) && JSON.parse(fs.readFileSync(arqui
 if (jaFeita) console.log(`Semana ${semana.inicio} a ${semana.fim} já processada.`);
 else await processar();
 
+/** fetch com até 4 tentativas (espera 15 s, 45 s e 90 s entre elas): o gov.br às vezes não responde. */
+async function buscar(url) {
+  const esperas = [15, 45, 90];
+  for (let i = 0; ; i++) {
+    try {
+      const resposta = await fetch(url, { headers: UA, signal: AbortSignal.timeout(120_000) });
+      if (resposta.status < 500 || i >= esperas.length) return resposta;
+      console.warn(`Tentativa ${i + 1}: resposta ${resposta.status} de ${url}`);
+    } catch (e) {
+      if (i >= esperas.length) throw e;
+      console.warn(`Tentativa ${i + 1} falhou (${e.cause?.code ?? e.message}): ${url}`);
+    }
+    await new Promise((pronto) => setTimeout(pronto, esperas[i] * 1000));
+  }
+}
+
 async function baixar(url, s) {
-  const resposta = await fetch(url, { headers: UA });
+  const resposta = await buscar(url);
   if (!resposta.ok) throw new Error(`Download falhou (${resposta.status}): ${url}`);
   const planilha = read(Buffer.from(await resposta.arrayBuffer()), { type: 'buffer' });
   const linhas = utils.sheet_to_json(planilha.Sheets[planilha.SheetNames[0]], { header: 1, defval: '' });
