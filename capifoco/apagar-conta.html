@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CapiFoco · Apagar a conta</title>
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --bg: #f6f2ea;
+    --card: #ffffff;
+    --text: #1f1f1e;
+    --sub: #5c5c59;
+    --border: #e2e0d8;
+    --accent: #2f6f6a;
+    --perigo: #b3261e;
+    --ok-bg: #e7efe9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1413;
+      --card: #17201e;
+      --text: #ededeb;
+      --sub: #a9b1ae;
+      --border: #2a3532;
+      --accent: #7cc7b2;
+      --perigo: #f2b8b5;
+      --ok-bg: #1f2d29;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 8px; }
+  h2 { font-size: 1.15rem; margin: 32px 0 8px; }
+  .sub { color: var(--sub); margin: 0 0 24px; }
+  .cartao { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  a { color: var(--accent); overflow-wrap: anywhere; }
+  li { margin: 6px 0; }
+  p { margin: 4px 0 12px; }
+  #google { min-height: 44px; margin: 12px 0; }
+  #situacao:empty { display: none; }
+  #situacao { margin-top: 12px; padding: 12px; border-radius: 8px; background: var(--ok-bg); }
+  .botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button {
+    font: inherit; font-weight: 600; border-radius: 8px; padding: 10px 16px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--card); color: var(--text);
+  }
+  button.perigo { background: var(--perigo); border-color: var(--perigo); color: #fff; }
+  @media (prefers-color-scheme: dark) { button.perigo { color: #3b0b08; } }
+  button:disabled { opacity: 0.6; cursor: default; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Apagar a conta do CapiFoco</h1>
+  <p class="sub">App CapiFoco (timer de foco, hábitos e revisões, com a capivara Capi)</p>
+
+  <div class="cartao">
+    <strong>Usa o app sem conta?</strong> Então não há nada seu no nosso servidor: hábitos, revisões e histórico ficam
+    só no celular e somem com <em>Mais &gt; Seus dados &gt; Apagar dados deste celular</em> ou ao desinstalar o app.
+  </div>
+
+  <h2>O que é apagado</h2>
+  <ul>
+    <li>o nível e o XP, o nome da Capi e os itens comprados e vestidos;</li>
+    <li>a ligação com o seu login do Google ou da Apple e as sessões abertas nos celulares;</li>
+    <li>o saldo de FocaMoedas, que é perdido (inclusive moedas compradas).</li>
+  </ul>
+  <p>
+    Ficam guardados só os registros das recompensas e dos movimentos de moedas, <strong>sem ligação com o login nem
+    com dados que identifiquem você</strong>, para prevenir fraudes e conferir a contabilidade das moedas. O Premium
+    comprado fica com a sua conta da loja (Google Play ou App Store) e volta com “Restaurar compras” no app.
+  </p>
+
+  <h2>Jeito 1: pelo app</h2>
+  <p>No CapiFoco, abra <em>Mais &gt; Conta</em> e toque em <em>Apagar minha conta</em>. A conta some na hora.</p>
+
+  <h2>Jeito 2: por aqui, sem o app (conta do Google)</h2>
+  <div class="cartao">
+    <ol>
+      <li>Entre com a <strong>mesma conta do Google</strong> que você usa no CapiFoco.</li>
+      <li>Confira a conta encontrada.</li>
+      <li>Toque em <strong>Apagar para sempre</strong>. A conta some na hora e não dá para recuperar.</li>
+    </ol>
+    <div id="google"></div>
+    <div id="situacao" role="status" aria-live="polite"></div>
+    <div class="botoes" id="botoes" hidden>
+      <button type="button" class="perigo" id="apagar">Apagar para sempre</button>
+      <button type="button" id="cancelar">Cancelar</button>
+    </div>
+  </div>
+  <p>
+    Usamos o login do Google só para confirmar que a conta é sua. Esta página não guarda nada e não lê o seu e-mail.
+  </p>
+
+  <h2>Entrou com a Apple?</h2>
+  <p>
+    O login com a Apple só existe no iPhone: apague pelo app, em <em>Mais &gt; Conta &gt; Apagar minha conta</em>.
+  </p>
+
+  <h2>Ajuda</h2>
+  <p>
+    Dúvidas ou dificuldade para apagar: escreva para
+    <a href="mailto:lilianemiyamotoo@gmail.com?subject=CapiFoco%20-%20apagar%20conta">lilianemiyamotoo@gmail.com</a>.
+    Veja também a <a href="privacidade.html">Política de Privacidade</a>.
+  </p>
+</main>
+<script>
+  // Endereço do servidor do CapiFoco. Vazio até o servidor ir ao ar: a página manda usar o app.
+  const SERVIDOR = '';
+  // Só no PC de desenvolvimento (localhost) dá para apontar outro servidor: num link público, isso entregaria o login
+  // a um endereço qualquer.
+  const API = location.hostname === 'localhost' ? new URLSearchParams(location.search).get('api') || SERVIDOR : SERVIDOR;
+  const CLIENTE_GOOGLE = '798456488962-17rld2ctjt0o4ha8tiqp5qoudk2e2ikm.apps.googleusercontent.com';
+
+  const situacao = document.getElementById('situacao');
+  const botoes = document.getElementById('botoes');
+  const apagar = document.getElementById('apagar');
+  let token = null;
+
+  const mostrar = (texto) => { situacao.textContent = texto; };
+
+  async function pedir(confirmar) {
+    const r = await fetch(`${API}/v1/web/apagar-conta`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ token, confirmar }),
+    });
+    const dados = await r.json().catch(() => ({}));
+    if (r.status === 401) throw new Error('Não deu para confirmar o login (ele vale por pouco tempo). Entre de novo com o Google.');
+    if (!r.ok) throw new Error(dados.mensagem || 'Algo deu errado. Tente de novo.');
+    return dados;
+  }
+
+  async function aoEntrar(resposta) {
+    token = resposta.credential;
+    botoes.hidden = true;
+    mostrar('Procurando a sua conta…');
+    try {
+      const d = await pedir(false);
+      if (!d.existe) {
+        token = null;
+        mostrar('Não há conta do CapiFoco ligada a essa conta do Google. Se você usa outra conta do Google no app, entre com ela.');
+        return;
+      }
+      const itens = d.itens === 1 ? '1 item da Capi' : `${d.itens} itens da Capi`;
+      mostrar(`Encontramos a sua conta: nível ${d.nivel}, ${itens}. Quer apagar para sempre?`);
+      botoes.hidden = false;
+    } catch (e) {
+      token = null;
+      mostrar(e.message);
+    }
+  }
+
+  apagar.addEventListener('click', async () => {
+    apagar.disabled = true;
+    try {
+      await pedir(true);
+      botoes.hidden = true;
+      mostrar('Pronto: a conta foi apagada. Se o app ainda estiver instalado, ele sai da conta sozinho na próxima vez que abrir.');
+    } catch (e) {
+      mostrar(e.message);
+    } finally {
+      token = null;
+      apagar.disabled = false;
+    }
+  });
+
+  document.getElementById('cancelar').addEventListener('click', () => {
+    token = null;
+    botoes.hidden = true;
+    mostrar('Nada foi apagado.');
+  });
+
+  function iniciarGoogle() {
+    if (!API) {
+      mostrar('A exclusão por esta página ainda não está disponível. Use o app (Jeito 1) ou escreva para o e-mail abaixo.');
+      return;
+    }
+    google.accounts.id.initialize({ client_id: CLIENTE_GOOGLE, callback: aoEntrar, auto_select: false });
+    google.accounts.id.renderButton(document.getElementById('google'), {
+      theme: 'outline', size: 'large', text: 'signin_with', locale: 'pt-BR',
+    });
+  }
+</script>
+<script src="https://accounts.google.com/gsi/client" async onload="iniciarGoogle()" onerror="mostrar('Não deu para carregar o login do Google. Confira a internet e recarregue a página.')"></script>
+</body>
+</html>
