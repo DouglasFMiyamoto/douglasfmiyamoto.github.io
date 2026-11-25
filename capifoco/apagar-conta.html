@@ -114,7 +114,7 @@
 </main>
 <script>
   // Endereço do servidor do CapiFoco. Vazio até o servidor ir ao ar: a página manda usar o app.
-  const SERVIDOR = '';
+  const SERVIDOR = 'https://capifoco-api.miyamoto-apps.workers.dev';
   // Só no PC de desenvolvimento (localhost) dá para apontar outro servidor: num link público, isso entregaria o login
   // a um endereço qualquer.
   const API = location.hostname === 'localhost' ? new URLSearchParams(location.search).get('api') || SERVIDOR : SERVIDOR;
